@@ -1,0 +1,465 @@
+/* -*- C -*- ****************************************************************
+ *
+ *  System        : 
+ *  Module        : 
+ *  Object Name   : $RCSfile$
+ *  Revision      : $Revision$
+ *  Date          : $Date$
+ *  Author        : $Author$
+ *  Created By    : Russ Magee
+ *  Created       : Fri May 18 22:46:40 2012
+ *  Last Modified : <120529.2306>
+ *
+ *  Description	
+ *
+ *  Notes
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ *  Copyright (c) 2012 Russ Magee.
+ * 
+ *  All Rights Reserved.
+ * 
+ * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+ * reproduced,  translated,  or  reduced to any  electronic  medium or machine
+ * readable form without prior written consent from Russ Magee.
+ *
+ ****************************************************************************/
+
+static const char rcsid[] = "@(#) : $Id$";
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <stdint.h>
+#include <string.h>
+#include <arpa/inet.h>
+#include "fame.h"
+
+typedef struct M68K_PROGRAM m68k_program;
+typedef struct M68K_DATA m68k_data;
+typedef struct M68K_CONTEXT m68k_context;
+
+/** Memory map for the sys-1
+ * Access Type      Range             Purpose
+ * -s ??  ROM[bw]   0x0-0x7           (Reset SSP/PC)
+ * us     RAM[bw]   0x000000-0x3fffff (4MiB)
+ * 
+ * --     Cons[bw]  0x800000-0x803fff (16KiB, text-mode console)
+ * us     -CoMem    0x..0000-0x..3fff  -(16368B: 2byte attr+char, max 132*62)
+ * 
+ * --     Vid[bw]   0x900000-0x9fffff (900KiB, 8-bit max. 800x600x8 2 pages)
+ * us     -Videm    0x.00000-0x.ea5ff  -(pixel memory)
+ *                  0x.ea600-0x.fffff  -RESVD (mirrored)
+ * 
+ * --     GIO[bw]   0xa00000-0xa00fff
+ * -s     -Tim0     0x...000-0x...00f (System Timer0)
+ * -s     -CoCtl    0x...010-0x...01f (Console regs)
+ * -s     -Term0    0x...020-0x...02f (Term0)
+ * -s     -Term1    0x...030-0x...03f (Term1)
+ *                                ...
+ * -s     -VidCtl   0x...400-0x...4ff (256B, ctrl regs)
+ *                                ...
+ * -s     -Rsv      0x...800-0x...fff (2KiB: future, resvd)
+ * 
+ * us     ROM[bw]   0xf00000-0xf7ffff (512KiB: system ROM)
+ */
+
+#define WORD_AT(s,offs) ((uint16_t *)(s))[(offs)>>1]
+#define BYTE_AT(s,offs) (s)[(offs^1)]
+
+#define RAM_BASE  0x0000000
+  #define RAM_SIZE  0x0400000
+#define CON_BASE  0x0800000
+  #define CON_SIZE  0x0004000
+#define VID_BASE  0x0900000
+  #define VID_AREA  0x0100000
+  #define VID_SIZE  0x0100000
+#define GIO_BASE   0x0a00000
+  #define GIO_AREA   0x0001000
+  #define GIO_SIZE   0x0001000
+#define ROM_BASE  0x0f00000
+  #define ROM_AREA  0x0080000
+  #define ROM_SIZE  0x0080000
+
+/* Unless otherwise noted all ctl regs are read/write positive logic
+   Write PEND bits to ACK corresponding IRQ and clear PEND
+   Byte regs MUST be written as bytes, Word regs as word
+ */
+
+/* TIM0 -Timer0. A simple CPUCLK/DIV timer.
+ * CTLb[COUNTEN]=1 -> enable counter, =0 -> stop counter
+ * CTLb[PEND]=1 -> IRQ pending, =0; any write to CTLb clears PEND
+ * CTLb[IRQEN]=1 -> IRQ enabled
+ * 
+ * Up-counting, IRQ on TIM0_DATw[n] < TIM0_DATw[n-1] -
+ *   that is, uint16_t overflow or CPU writing TIM0_DATw < TIM0_DATw[n-1].
+ * CTLb[PEND]=1 on above conditions
+ * 
+ * DIVb = TIM0 divider (writing a 0 yields DIVb of 1)
+ */
+#define GIO_BLK0_MASK   0x3F     /* mask to aid in narrowing decode logic */
+/* GIO_BLK0 contains timers, serial hardware, control regs for console, etc. */
+#define GIO_VIDCTL_MASK 0x4FF
+
+#define GIO_
+#define TIM0            0x00
+#define TIM0_IRQLVL     6
+#define TIM0_DATw       0x00     /* upctr: IRQ6 on overflow; write=clear */
+#define TIM0_CTLb       0x03     /* TIM0_CTL[2:0] COUNTEN,PEND,IRQEN */
+#define TIM0_DIVb       0x05     /* TIM0_DIV[7:0] 8MHz/(1/2/4/.../128) */
+
+#define CON0            0x10
+#define CON0_IRQLVL     2
+#define CON0_CTLb       0x01 /* CON0_CTL[7:0]
+                                MODE1,MOD0,x,x,x,x,PEND,IRQEN */
+
+#define TERM0           0x20
+#define TERM0_IRQLVL    3
+#define TERM0_TXb       0x01
+#define TERM0_RXb       0x03
+#define TERM0_CTLb      0x05    /* T0_CTL[6:0]
+                                   RESVD,BR1,BR0,TXE,RXF,RXV,PEND,IRQEN */
+#define TERM1           0x30
+#define TERM1_IRQLVL    3
+#define TERM1_TXb       0x01
+#define TERM1_RXb       0x03
+#define TERM1_CTLb      0x05    /* T1_CTL[6:0]
+                                   RESVD,BR1,BR0,TXE,RXF,RXV,PEND,IRQEN */
+
+/* TODO: VID */
+
+uint8_t RAM[RAM_SIZE] = {0};
+uint8_t Cons[CON_SIZE];
+uint8_t Vid[VID_SIZE];
+uint8_t GIO[GIO_SIZE];
+uint8_t ROM[ROM_SIZE];
+
+void GIO_init(void) {
+    BYTE_AT(GIO,TIM0_DIVb) = 0x01u;
+}
+
+typedef struct _cpuclktimer {
+    uint16_t tim0dat;
+    uint16_t tim0dat_last;
+    uint16_t tim0offs;
+} cpuclktimer;
+
+static cpuclktimer Tim0 = {0, 0, 0};
+
+void TIM0_count(void) {
+    int irq_status;
+    
+    Tim0.tim0dat = (uint16_t)m68k_get_cycles_counter() / BYTE_AT(GIO,TIM0_DIVb);
+    /* High-resolution TIM0 - running at CPUCLK, IRQ on overflow */
+    if( BYTE_AT(GIO,TIM0_CTLb) & 0x04 ) {
+        if( (WORD_AT(GIO,TIM0_DATw) = Tim0.tim0dat-Tim0.tim0offs) < Tim0.tim0dat_last ) {
+            /* Overflow */
+            /* Raise IRQ if enabled */
+            if( BYTE_AT(GIO,TIM0_CTLb) & 0x01 ) {
+                if( (irq_status = m68k_raise_irq(TIM0_IRQLVL, M68K_AUTOVECTORED_IRQ)) != M68K_OK ) {
+                    printf("Error raising IRQ! (irq_status=%d)\n", irq_status);
+                }
+                /* IRQ pending */
+                BYTE_AT(GIO,TIM0_CTLb) |= 0x02;
+            }
+        }
+    }
+    Tim0.tim0dat_last = Tim0.tim0dat - Tim0.tim0offs;
+}
+
+
+int gio_byte_read(int address)
+{
+    uint8_t ret = 0xFFu; /* default for unmapped areas */
+    
+    uint32_t offset = address-GIO_BASE;
+    
+    switch(offset) {
+    case TIM0+TIM0_CTLb:
+        BYTE_AT(GIO,offset) &= ~(0x02); /* PEND=0 */
+        ret = BYTE_AT(GIO,offset);
+        m68k_lower_irq(TIM0_IRQLVL);
+        break;
+        
+    /* TERM0 */
+    case TERM0+TERM0_TXb:
+    case TERM1+TERM1_TXb:
+        ret = BYTE_AT(GIO,offset);
+        break;
+    case TERM0+TERM0_RXb:
+    case TERM1+TERM1_RXb:
+        {
+            int chanOffset = offset & ~0x0Fu;
+            /* Reading RXb clears register, and PEND, RXF status */
+            ret = BYTE_AT(GIO,offset);
+            BYTE_AT(GIO,offset) = 0x00;
+            BYTE_AT(GIO, (chanOffset+TERM0_CTLb)) &= ~(0x08|0x02); /* ~RXF,~PEND */
+        }
+        break;
+    case TERM0+TERM0_CTLb:
+        /* Reading CTLb register simply returns all bits */
+        ret = BYTE_AT(GIO,offset);
+        break;
+    }
+    return ret;
+}
+
+int gio_word_read(int address)
+{
+    uint32_t offset = address-GIO_BASE;
+    return ((unsigned short *)GIO)[offset>>1];
+}
+
+int gio_word_read_dummy(int address)
+{
+    //    return ((unsigned short *)GIO)[address>>1];
+    return 0x5500+ (address & 0xff);
+}
+
+void gio_byte_write(int address, int data)
+{
+    uint32_t offset = address-GIO_BASE;
+    switch(offset) {
+    case TIM0+TIM0_CTLb:
+        /* Any write to TIM0_CTLb clears PEND */
+        data &= ~(0x02);
+        m68k_lower_irq(TIM0_IRQLVL); /* Clear any pending IRQ */
+        break;
+    case TIM0+TIM0_DIVb:
+        if( data == 0u ) data = 1u;
+        break;
+        
+    case TERM0+TERM0_TXb:
+    case TERM1+TERM1_TXb:
+        /* TODO */
+        {
+            int chanOffset = offset & ~0x0Fu;
+            
+            GIO[offset^1] = data & 0xFF;
+        }
+        break;
+        
+    }
+    GIO[offset^1] = data & 0xFF;
+}
+
+void gio_word_write(int address, int data)
+{
+    uint32_t offset = address-GIO_BASE;
+    switch(offset) {
+    case TIM0_DATw:
+        /* Any write to TIM0_DATw clears counter to 0 */
+        Tim0.tim0offs = (uint16_t)m68k_get_cycles_counter();
+        /* Check IRQ logic BEFORE writing to counter data;
+         * in case CPU clears reg just before an overflow */
+        TIM0_count();
+        break;
+    }
+    ((unsigned short *)GIO)[offset>>1] = data & 0xFFFF;
+}
+
+void reset_handler(void) {
+    /* TODO: reset devices */
+    /* Set CPU's SSP, PC to that specified in ROM[0-7]
+     * (This is similar to the Atari ST series' boot-remap behaviour
+     *  during the first two longword fetches after a poweron/reset)
+     */
+    uint32_t initial_ssp = ROM[0]<<24 + ROM[1]<<16 + ROM[2]<<8 + ROM[3];
+    uint32_t initial_pc =  ROM[4]<<24 + ROM[5]<<16 + ROM[6]<<8 + ROM[7];
+    printf("[RESET: from ROM [initial_ssp=$%08x, initial_pc=$%08x]\n",
+           initial_ssp, initial_pc);
+    m68k_set_register(M68K_REG_A7, initial_ssp);
+    m68k_set_register(M68K_REG_PC, initial_pc);
+    m68k_control_cycles_counter(1);  /* Reset cycle counter to zero */
+    m68k_add_cycles(8); /* FIXME: how many cycles on real CPU for above? */
+}
+
+void iack_handler(uint32_t level) {
+    /* TODO: handle behaviour of GIO peripherals when CPU IACKs */
+}
+
+/* Shows the CPU internal state */
+void show_cpu_state(void) 
+{
+	int sr;
+
+	printf("PC:%08X\n",m68k_get_pc());
+	printf("D0:%08X ",m68k_get_register(M68K_REG_D0));
+	printf("D1:%08X ",m68k_get_register(M68K_REG_D1));
+	printf("D2:%08X ",m68k_get_register(M68K_REG_D2));
+	printf("D3:%08X\n",m68k_get_register(M68K_REG_D3));
+	printf("D4:%08X ",m68k_get_register(M68K_REG_D4));
+	printf("D5:%08X ",m68k_get_register(M68K_REG_D5));
+	printf("D6:%08X ",m68k_get_register(M68K_REG_D6));
+	printf("D7:%08X\n",m68k_get_register(M68K_REG_D7));
+	printf("A0:%08X ",m68k_get_register(M68K_REG_A0));
+	printf("A1:%08X ",m68k_get_register(M68K_REG_A1));
+	printf("A2:%08X ",m68k_get_register(M68K_REG_A2));
+	printf("A3:%08X\n",m68k_get_register(M68K_REG_A3));
+	printf("A4:%08X ",m68k_get_register(M68K_REG_A4));
+	printf("A5:%08X ",m68k_get_register(M68K_REG_A5));
+	printf("A6:%08X ",m68k_get_register(M68K_REG_A6));
+	printf("A7:%08X\n",m68k_get_register(M68K_REG_A7));
+	printf("SR:%04X  ",(sr = m68k_get_register(M68K_REG_SR)));
+	printf("Flags: %c%c%c%c%c\n",
+		(sr >> 4) & 1 ? 'X' : '-',
+		(sr >> 3) & 1 ? 'N' : '-',
+		(sr >> 2) & 1 ? 'Z' : '-',
+		(sr >> 1) & 1 ? 'V' : '-',
+		(sr     ) & 1 ? 'C' : '-'
+	);
+}
+
+/* Performs byte swapping */
+void area_swap_bytes(uint8_t *area, int32_t size) 
+{
+	uint8_t  aux;
+	uint32_t i;
+
+	for(i=0; i<size-1; i+=2)
+	{
+        	aux = area[i];
+        	area[i] = area[i+1];
+        	area[i+1] = aux;
+	}
+}
+
+/* Program space */
+m68k_program prog[] = {
+{ RAM_BASE, RAM_BASE+RAM_SIZE-1, (int32_t)RAM - RAM_BASE }, /* RAM */
+{ CON_BASE, CON_BASE+CON_SIZE-1, (int32_t)Cons - CON_BASE }, /* Cons */
+{ VID_BASE, VID_BASE+VID_SIZE-1, (int32_t)Vid - VID_BASE }, /* Vid */
+{ ROM_BASE, ROM_BASE+ROM_SIZE-1, (int32_t)ROM - ROM_BASE }, /* ROM */
+{ -1, -1, (uint32_t)NULL }
+};
+
+/* Byte Read space */
+m68k_data data_rb[] = {
+{ RAM_BASE, RAM_BASE+RAM_SIZE-1, NULL, RAM - RAM_BASE },
+{ CON_BASE, CON_BASE+CON_SIZE-1, NULL, Cons - CON_BASE },
+{ VID_BASE, VID_BASE+VID_SIZE-1, NULL, Vid - VID_BASE },
+{ GIO_BASE, GIO_BASE+GIO_SIZE-1, gio_byte_read, NULL },
+{ ROM_BASE, ROM_BASE+ROM_SIZE-1, NULL, ROM - ROM_BASE },
+{ -1, -1, NULL, NULL }
+};
+
+/* Byte Write space */
+m68k_data data_wb[] = {
+{ RAM_BASE, RAM_BASE+RAM_SIZE-1, NULL, RAM - RAM_BASE },
+{ CON_BASE, CON_BASE+CON_SIZE-1, NULL, Cons - CON_BASE },
+{ VID_BASE, VID_BASE+VID_SIZE-1, NULL, Vid - VID_BASE },
+{ GIO_BASE, GIO_BASE+GIO_SIZE-1, gio_byte_write, NULL },
+{ ROM_BASE, ROM_BASE+ROM_SIZE-1, NULL, ROM - ROM_BASE },
+{ -1, -1, NULL, NULL }
+};
+
+/* Word Read space */
+m68k_data data_rw[] = {
+{ RAM_BASE, RAM_BASE+RAM_SIZE-1, NULL, RAM - RAM_BASE },
+{ CON_BASE, CON_BASE+CON_SIZE-1, NULL, Cons - CON_BASE },
+{ VID_BASE, VID_BASE+VID_SIZE-1, NULL, Vid - VID_BASE },
+{ GIO_BASE, GIO_BASE+GIO_SIZE-1, gio_word_read, NULL },
+{ ROM_BASE, ROM_BASE+ROM_SIZE-1, NULL, ROM - ROM_BASE },
+{ -1, -1, NULL, NULL }
+};
+
+/* Word Write space */
+m68k_data data_ww[] = {
+{ RAM_BASE, RAM_BASE+RAM_SIZE-1, NULL, RAM  -RAM_BASE },
+{ CON_BASE, CON_BASE+CON_SIZE-1, NULL, Cons -CON_BASE },
+{ VID_BASE, VID_BASE+VID_SIZE-1, NULL, Vid  -VID_BASE },
+{ GIO_BASE, GIO_BASE+GIO_SIZE-1, gio_word_write, NULL },
+{ ROM_BASE, ROM_BASE+ROM_SIZE-1, NULL, ROM - ROM_BASE },
+{ -1, -1, NULL, NULL }
+};
+
+m68k_context cpuCtx = {0};
+
+int main(int argc, char *argv[]) {
+    int status;
+    FILE *romFile;
+    
+    /* Init peripherals */
+    GIO_init();
+    
+    /* Load in ROM */
+    romFile = fopen("rlm-sys-1.rom", "r");
+    if( romFile == NULL ) {
+        perror("fopen");
+        return -1;
+    }
+    else {
+        int32_t size_read;
+        printf("Read %d bytes from ROM file.\n",
+               (size_read = fread(ROM, 1, ROM_SIZE, romFile)));
+        fclose(romFile);
+        area_swap_bytes(ROM, size_read);
+    }
+    
+    /* Testing: set up initial SSP, PC */
+    ((uint16_t *)RAM)[0] = ((uint16_t *)ROM)[0];
+    ((uint16_t *)RAM)[1] = ((uint16_t *)ROM)[1];
+    ((uint16_t *)RAM)[2] = ((uint16_t *)ROM)[2];
+    ((uint16_t *)RAM)[3] = ((uint16_t *)ROM)[3];
+    
+    /* Set up CPU context */
+    /* TODO: set up user vs. super areas above properly */
+    memset(&cpuCtx, 0, sizeof(cpuCtx));
+    cpuCtx.sv_fetch = prog;
+    cpuCtx.user_fetch = prog;
+    
+    cpuCtx.sv_read_byte = data_rb;
+    cpuCtx.user_read_byte = data_rb;
+    cpuCtx.sv_read_word = data_rw;
+    cpuCtx.user_read_word = data_rw;
+    
+    cpuCtx.sv_write_byte = data_wb;
+    cpuCtx.user_write_byte = data_wb;
+    cpuCtx.sv_write_word = data_ww;
+    cpuCtx.user_write_word = data_ww;
+    
+//    cpuCtx.reset_handler = reset_handler;
+//    cpuCtx.iack_handler = iack_handler;
+    printf("CPU context initialized.\n");
+    
+    m68k_set_context(&cpuCtx);
+    
+    printf("CPU context set.\n");
+    m68k_init();
+    printf("CPU initialized, ready for RESET.\n");
+    
+    if( (status = m68k_reset()) != M68K_OK ) {
+        printf("m68k_reset() returned %d\n", status);
+        return -1;
+    }
+    else {
+        printf("CPU reset successful.\n");
+    }
+    
+    /* Start emulation */
+    {
+        int32_t done = 0;
+        
+        printf("Entering emulation.\n");
+        do {
+            int cpu_status;
+            uint32_t timeSlice = 1U;
+            
+            m68k_emulate(timeSlice);
+            TIM0_count();
+
+            if( (cpu_status = m68k_get_cpu_state()) == M68K_OK ) {
+                show_cpu_state();
+                printf("cycles:%d\n", m68k_get_cycles_counter());
+            }
+            else {
+                printf("ERROR: cpu_status=%d\n", cpu_status);
+                return -1;
+            }
+        } while( getchar() != 'q' );
+    }
+    return 0;
+}

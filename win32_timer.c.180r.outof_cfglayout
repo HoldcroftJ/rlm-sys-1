@@ -1,0 +1,1001 @@
+
+;; Function SetSchedulerRes (SetSchedulerRes)
+
+Reordered sequence:
+ 2 bb 2  [0]
+ 3 bb 3  [0]
+ 4 bb 4  [0]
+ 5 bb 5  [0]
+ 6 bb 6  [0]
+ 7 bb 7  [0]
+(note 1 0 3 NOTE_INSN_DELETED)
+
+;; Start of basic block ( 0) -> 2
+;; Pred edge  ENTRY (fallthru)
+(note 3 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+
+(note 2 3 5 2 NOTE_INSN_FUNCTION_BEG)
+
+(insn 5 2 6 2 win32_timer.c:34 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int 0 [0x0])) 44 {*movsi_1} (nil))
+
+(insn 6 5 7 2 win32_timer.c:38 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (const_int 8 [0x8])) 44 {*movsi_1} (nil))
+
+(insn 7 6 8 2 win32_timer.c:38 (parallel [
+            (set (reg:SI 68)
+                (plus:SI (reg/f:SI 20 frame)
+                    (const_int -16 [0xfffffff0])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 8 7 9 2 win32_timer.c:38 (set (mem/f/i:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (reg:SI 68)) 44 {*movsi_1} (expr_list:REG_EQUAL (plus:SI (reg/f:SI 20 frame)
+            (const_int -16 [0xfffffff0]))
+        (nil)))
+
+(call_insn 9 8 10 2 win32_timer.c:38 (parallel [
+            (set (reg:SI 0 ax)
+                (call (mem:QI (symbol_ref:SI ("timeGetDevCaps@8") [flags 0x43]  <function_decl 0x7f88b680 timeGetDevCaps>) [0 S1 A8])
+                    (const_int 8 [0x8])))
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int 8 [0x8])))
+        ]) 693 {*call_value_pop_0} (nil)
+    (nil))
+
+(insn 10 9 11 2 win32_timer.c:38 (parallel [
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int -8 [0xfffffff8])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 11 10 12 2 win32_timer.c:38 (set (reg:SI 58 [ D.35096 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 12 11 13 2 win32_timer.c:38 (set (reg:CCZ 17 flags)
+        (compare:CCZ (reg:SI 58 [ D.35096 ])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 13 12 14 2 win32_timer.c:38 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 23)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 23)
+;; End of basic block 2 -> ( 3 4)
+
+;; Succ edge  3 (fallthru)
+;; Succ edge  4
+
+;; Start of basic block ( 2) -> 3
+;; Pred edge  2 (fallthru)
+(note 14 13 15 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+
+(call_insn 15 14 16 3 win32_timer.c:39 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("GetLastError@0") [flags 0x43]  <function_decl 0x7fbe6080 GetLastError>) [0 S1 A8])
+            (const_int 0 [0x0]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 16 15 17 3 win32_timer.c:39 (set (reg:SI 59 [ D.35099 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 17 16 18 3 win32_timer.c:39 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 59 [ D.35099 ])) 44 {*movsi_1} (nil))
+
+(insn 18 17 19 3 win32_timer.c:39 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC0") [flags 0x2]  <string_cst 0x7f48e7f0>)) 44 {*movsi_1} (nil))
+
+(call_insn 19 18 20 3 win32_timer.c:39 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("printf") [flags 0x43]  <function_decl 0x7fdf5f00 printf>) [0 S1 A8])
+            (const_int 8 [0x8]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 20 19 72 3 win32_timer.c:40 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int -1 [0xffffffff])) 44 {*movsi_1} (nil))
+
+(jump_insn 72 20 73 3 (set (pc)
+        (label_ref 59)) -1 (nil)
+ -> 59)
+;; End of basic block 3 -> ( 7)
+
+;; Succ edge  7 [100.0%] 
+
+(barrier 73 72 23)
+
+;; Start of basic block ( 2) -> 4
+;; Pred edge  2
+(code_label 23 73 24 4 2 "" [1 uses])
+
+(note 24 23 25 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+
+(insn 25 24 26 4 win32_timer.c:43 (set (reg:SI 60 [ D.35101 ])
+        (mem/s/j/c:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -16 [0xfffffff0])) [0 tc.wPeriodMin+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 26 25 27 4 win32_timer.c:43 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 60 [ D.35101 ])) 44 {*movsi_1} (nil))
+
+(insn 27 26 28 4 win32_timer.c:43 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC1") [flags 0x2]  <string_cst 0x7fda1378>)) 44 {*movsi_1} (nil))
+
+(call_insn 28 27 29 4 win32_timer.c:43 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("printf") [flags 0x43]  <function_decl 0x7fdf5f00 printf>) [0 S1 A8])
+            (const_int 8 [0x8]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 29 28 30 4 win32_timer.c:44 (set (reg:SI 61 [ D.35102 ])
+        (mem/s/j/c:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -12 [0xfffffff4])) [0 tc.wPeriodMax+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 30 29 31 4 win32_timer.c:44 (set (reg:SI 62 [ D.35103 ])
+        (mem/s/j/c:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -16 [0xfffffff0])) [0 tc.wPeriodMin+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 31 30 32 4 win32_timer.c:44 (set (reg:SI 69)
+        (mem/c/i:SI (reg/f:SI 16 argp) [0 period_ms+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 32 31 33 4 win32_timer.c:44 (set (reg:CC 17 flags)
+        (compare:CC (reg:SI 62 [ D.35103 ])
+            (reg:SI 69))) 6 {*cmpsi_1} (nil))
+
+(insn 33 32 34 4 win32_timer.c:44 (set (reg:SI 63 [ D.35104 ])
+        (if_then_else:SI (geu (reg:CC 17 flags)
+                (const_int 0 [0x0]))
+            (reg:SI 62 [ D.35103 ])
+            (reg:SI 69))) 668 {*movsicc_noc} (nil))
+
+(insn 34 33 35 4 win32_timer.c:44 (set (reg:CC 17 flags)
+        (compare:CC (reg:SI 61 [ D.35102 ])
+            (reg:SI 63 [ D.35104 ]))) 6 {*cmpsi_1} (nil))
+
+(insn 35 34 36 4 win32_timer.c:44 (set (reg:SI 70)
+        (if_then_else:SI (leu (reg:CC 17 flags)
+                (const_int 0 [0x0]))
+            (reg:SI 61 [ D.35102 ])
+            (reg:SI 63 [ D.35104 ]))) 668 {*movsicc_noc} (nil))
+
+(insn 36 35 37 4 win32_timer.c:44 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -8 [0xfffffff8])) [0 timerRes+0 S4 A32])
+        (reg:SI 70)) 44 {*movsi_1} (nil))
+
+(insn 37 36 38 4 win32_timer.c:45 (set (reg:SI 71)
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -8 [0xfffffff8])) [0 timerRes+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 38 37 39 4 win32_timer.c:45 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (reg:SI 71)) 44 {*movsi_1} (nil))
+
+(call_insn 39 38 40 4 win32_timer.c:45 (parallel [
+            (set (reg:SI 0 ax)
+                (call (mem:QI (symbol_ref:SI ("timeBeginPeriod@4") [flags 0x43]  <function_decl 0x7f88b700 timeBeginPeriod>) [0 S1 A8])
+                    (const_int 4 [0x4])))
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int 4 [0x4])))
+        ]) 693 {*call_value_pop_0} (nil)
+    (nil))
+
+(insn 40 39 41 4 win32_timer.c:45 (parallel [
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int -4 [0xfffffffc])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 41 40 42 4 win32_timer.c:45 (set (reg:SI 64 [ D.35105 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 42 41 43 4 win32_timer.c:45 (set (reg:CCZ 17 flags)
+        (compare:CCZ (reg:SI 64 [ D.35105 ])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 43 42 44 4 win32_timer.c:45 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 53)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 53)
+;; End of basic block 4 -> ( 5 6)
+
+;; Succ edge  5 (fallthru)
+;; Succ edge  6
+
+;; Start of basic block ( 4) -> 5
+;; Pred edge  4 (fallthru)
+(note 44 43 45 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+
+(call_insn 45 44 46 5 win32_timer.c:46 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("GetLastError@0") [flags 0x43]  <function_decl 0x7fbe6080 GetLastError>) [0 S1 A8])
+            (const_int 0 [0x0]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 46 45 47 5 win32_timer.c:46 (set (reg:SI 65 [ D.35108 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 47 46 48 5 win32_timer.c:46 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 65 [ D.35108 ])) 44 {*movsi_1} (nil))
+
+(insn 48 47 49 5 win32_timer.c:46 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC2") [flags 0x2]  <string_cst 0x7f48e910>)) 44 {*movsi_1} (nil))
+
+(call_insn 49 48 50 5 win32_timer.c:46 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("printf") [flags 0x43]  <function_decl 0x7fdf5f00 printf>) [0 S1 A8])
+            (const_int 8 [0x8]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 50 49 74 5 win32_timer.c:47 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int -1 [0xffffffff])) 44 {*movsi_1} (nil))
+
+(jump_insn 74 50 75 5 (set (pc)
+        (label_ref 59)) -1 (nil)
+ -> 59)
+;; End of basic block 5 -> ( 7)
+
+;; Succ edge  7 [100.0%] 
+
+(barrier 75 74 53)
+
+;; Start of basic block ( 4) -> 6
+;; Pred edge  4
+(code_label 53 75 54 6 4 "" [1 uses])
+
+(note 54 53 55 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+
+(insn 55 54 56 6 win32_timer.c:50 (set (reg:SI 72)
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -8 [0xfffffff8])) [0 timerRes+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 56 55 57 6 win32_timer.c:50 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 72)) 44 {*movsi_1} (nil))
+
+(insn 57 56 58 6 win32_timer.c:50 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC3") [flags 0x2]  <string_cst 0x7fda13b0>)) 44 {*movsi_1} (nil))
+
+(call_insn 58 57 59 6 win32_timer.c:50 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("printf") [flags 0x43]  <function_decl 0x7fdf5f00 printf>) [0 S1 A8])
+            (const_int 8 [0x8]))) 696 {*call_value_0} (nil)
+    (nil))
+;; End of basic block 6 -> ( 7)
+
+;; Succ edge  7 (fallthru)
+
+;; Start of basic block ( 6 3 5) -> 7
+;; Pred edge  6 (fallthru)
+;; Pred edge  3 [100.0%] 
+;; Pred edge  5 [100.0%] 
+(code_label 59 58 60 7 3 "" [2 uses])
+
+(note 60 59 61 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+
+(insn 61 60 62 7 win32_timer.c:54 (set (reg:SI 66 [ D.35110 ])
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 62 61 66 7 win32_timer.c:54 (set (reg:SI 67 [ <retval> ])
+        (reg:SI 66 [ D.35110 ])) 44 {*movsi_1} (nil))
+
+(insn 66 62 69 7 win32_timer.c:55 (set (reg/i:SI 0 ax)
+        (reg:SI 67 [ <retval> ])) 44 {*movsi_1} (nil))
+
+(insn 69 66 0 7 win32_timer.c:55 (use (reg/i:SI 0 ax)) -1 (nil))
+;; End of basic block 7 -> ( 1)
+
+;; Succ edge  EXIT [100.0%]  (fallthru)
+
+
+;; Function ResetSchedulerRes (ResetSchedulerRes)
+
+Reordered sequence:
+ 2 bb 2  [0]
+ 3 bb 3  [0]
+ 4 bb 4  [0]
+ 5 bb 5  [0]
+(note 1 0 3 NOTE_INSN_DELETED)
+
+;; Start of basic block ( 0) -> 2
+;; Pred edge  ENTRY (fallthru)
+(note 3 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+
+(note 2 3 5 2 NOTE_INSN_FUNCTION_BEG)
+
+(insn 5 2 6 2 win32_timer.c:58 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int 0 [0x0])) 44 {*movsi_1} (nil))
+
+(insn 6 5 7 2 win32_timer.c:60 (set (reg:SI 62)
+        (mem/c/i:SI (reg/f:SI 16 argp) [0 period_ms+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 7 6 8 2 win32_timer.c:60 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (reg:SI 62)) 44 {*movsi_1} (nil))
+
+(call_insn 8 7 9 2 win32_timer.c:60 (parallel [
+            (set (reg:SI 0 ax)
+                (call (mem:QI (symbol_ref:SI ("timeEndPeriod@4") [flags 0x43]  <function_decl 0x7f88b780 timeEndPeriod>) [0 S1 A8])
+                    (const_int 4 [0x4])))
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int 4 [0x4])))
+        ]) 693 {*call_value_pop_0} (nil)
+    (nil))
+
+(insn 9 8 10 2 win32_timer.c:60 (parallel [
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int -4 [0xfffffffc])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 10 9 11 2 win32_timer.c:60 (set (reg:SI 58 [ D.35089 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 11 10 12 2 win32_timer.c:60 (set (reg:CCZ 17 flags)
+        (compare:CCZ (reg:SI 58 [ D.35089 ])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 12 11 13 2 win32_timer.c:60 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 22)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 22)
+;; End of basic block 2 -> ( 3 4)
+
+;; Succ edge  3 (fallthru)
+;; Succ edge  4
+
+;; Start of basic block ( 2) -> 3
+;; Pred edge  2 (fallthru)
+(note 13 12 14 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+
+(call_insn 14 13 15 3 win32_timer.c:61 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("GetLastError@0") [flags 0x43]  <function_decl 0x7fbe6080 GetLastError>) [0 S1 A8])
+            (const_int 0 [0x0]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 15 14 16 3 win32_timer.c:61 (set (reg:SI 59 [ D.35092 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 16 15 17 3 win32_timer.c:61 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 59 [ D.35092 ])) 44 {*movsi_1} (nil))
+
+(insn 17 16 18 3 win32_timer.c:61 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC4") [flags 0x2]  <string_cst 0x7fec5580>)) 44 {*movsi_1} (nil))
+
+(call_insn 18 17 19 3 win32_timer.c:61 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("printf") [flags 0x43]  <function_decl 0x7fdf5f00 printf>) [0 S1 A8])
+            (const_int 8 [0x8]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 19 18 39 3 win32_timer.c:62 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int -1 [0xffffffff])) 44 {*movsi_1} (nil))
+
+(jump_insn 39 19 40 3 (set (pc)
+        (label_ref 26)) -1 (nil)
+ -> 26)
+;; End of basic block 3 -> ( 5)
+
+;; Succ edge  5 [100.0%] 
+
+(barrier 40 39 22)
+
+;; Start of basic block ( 2) -> 4
+;; Pred edge  2
+(code_label 22 40 23 4 6 "" [1 uses])
+
+(note 23 22 24 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+
+(insn 24 23 25 4 win32_timer.c:65 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC5") [flags 0x2]  <string_cst 0x7f48eac0>)) 44 {*movsi_1} (nil))
+
+(call_insn 25 24 26 4 win32_timer.c:65 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("puts") [flags 0x43]  <function_decl 0x7fdf6280 __builtin_puts>) [0 S1 A8])
+            (const_int 4 [0x4]))) 696 {*call_value_0} (nil)
+    (nil))
+;; End of basic block 4 -> ( 5)
+
+;; Succ edge  5 (fallthru)
+
+;; Start of basic block ( 4 3) -> 5
+;; Pred edge  4 (fallthru)
+;; Pred edge  3 [100.0%] 
+(code_label 26 25 27 5 7 "" [1 uses])
+
+(note 27 26 28 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+
+(insn 28 27 29 5 win32_timer.c:68 (set (reg:SI 60 [ D.35094 ])
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 29 28 33 5 win32_timer.c:68 (set (reg:SI 61 [ <retval> ])
+        (reg:SI 60 [ D.35094 ])) 44 {*movsi_1} (nil))
+
+(insn 33 29 36 5 win32_timer.c:69 (set (reg/i:SI 0 ax)
+        (reg:SI 61 [ <retval> ])) 44 {*movsi_1} (nil))
+
+(insn 36 33 0 5 win32_timer.c:69 (use (reg/i:SI 0 ax)) -1 (nil))
+;; End of basic block 5 -> ( 1)
+
+;; Succ edge  EXIT [100.0%]  (fallthru)
+
+
+;; Function installTimerFunc (installTimerFunc)
+
+Reordered sequence:
+ 2 bb 2  [0]
+ 3 bb 3  [0]
+ 4 bb 4  [0]
+ 5 bb 5  [0]
+(note 1 0 3 NOTE_INSN_DELETED)
+
+;; Start of basic block ( 0) -> 2
+;; Pred edge  ENTRY (fallthru)
+(note 3 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+
+(note 2 3 5 2 NOTE_INSN_FUNCTION_BEG)
+
+(insn 5 2 6 2 win32_timer.c:72 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int 0 [0x0])) 44 {*movsi_1} (nil))
+
+(insn 6 5 7 2 win32_timer.c:74 (set (reg/f:SI 58 [ cb.6 ])
+        (mem/f/c/i:SI (plus:SI (reg/f:SI 16 argp)
+                (const_int 8 [0x8])) [0 cb+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 7 6 8 2 win32_timer.c:74 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 16 [0x10])) [0 S4 A32])
+        (const_int 1 [0x1])) 44 {*movsi_1} (nil))
+
+(insn 8 7 9 2 win32_timer.c:74 (set (reg:SI 66)
+        (mem/c/i:SI (plus:SI (reg/f:SI 16 argp)
+                (const_int 12 [0xc])) [0 arg+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 9 8 10 2 win32_timer.c:74 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 12 [0xc])) [0 S4 A32])
+        (reg:SI 66)) 44 {*movsi_1} (nil))
+
+(insn 10 9 11 2 win32_timer.c:74 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 8 [0x8])) [0 S4 A32])
+        (reg/f:SI 58 [ cb.6 ])) 44 {*movsi_1} (nil))
+
+(insn 11 10 12 2 win32_timer.c:74 (set (reg:SI 67)
+        (mem/c/i:SI (reg/f:SI 16 argp) [0 period_ms+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 12 11 13 2 win32_timer.c:74 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 67)) 44 {*movsi_1} (nil))
+
+(insn 13 12 14 2 win32_timer.c:74 (set (reg:SI 68)
+        (mem/c/i:SI (reg/f:SI 16 argp) [0 period_ms+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 14 13 15 2 win32_timer.c:74 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (reg:SI 68)) 44 {*movsi_1} (nil))
+
+(call_insn 15 14 16 2 win32_timer.c:74 (parallel [
+            (set (reg:SI 0 ax)
+                (call (mem:QI (symbol_ref:SI ("timeSetEvent@20") [flags 0x43]  <function_decl 0x7f88b580 timeSetEvent>) [0 S1 A8])
+                    (const_int 20 [0x14])))
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int 20 [0x14])))
+        ]) 693 {*call_value_pop_0} (nil)
+    (nil))
+
+(insn 16 15 17 2 win32_timer.c:74 (parallel [
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int -20 [0xffffffec])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 17 16 18 2 win32_timer.c:74 (set (reg:SI 59 [ D.35079 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 18 17 19 2 win32_timer.c:74 (set (reg/f:SI 69)
+        (mem/f/c/i:SI (plus:SI (reg/f:SI 16 argp)
+                (const_int 4 [0x4])) [0 timer_id+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 19 18 20 2 win32_timer.c:74 (set (mem:SI (reg/f:SI 69) [0 S4 A32])
+        (reg:SI 59 [ D.35079 ])) 44 {*movsi_1} (nil))
+
+(insn 20 19 21 2 win32_timer.c:74 (set (reg/f:SI 70)
+        (mem/f/c/i:SI (plus:SI (reg/f:SI 16 argp)
+                (const_int 4 [0x4])) [0 timer_id+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 21 20 22 2 win32_timer.c:74 (set (reg:SI 60 [ D.35080 ])
+        (mem:SI (reg/f:SI 70) [0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 22 21 23 2 win32_timer.c:74 (set (reg:CCZ 17 flags)
+        (compare:CCZ (reg:SI 60 [ D.35080 ])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 23 22 24 2 win32_timer.c:74 (set (pc)
+        (if_then_else (ne (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 33)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 33)
+;; End of basic block 2 -> ( 3 4)
+
+;; Succ edge  3 (fallthru)
+;; Succ edge  4
+
+;; Start of basic block ( 2) -> 3
+;; Pred edge  2 (fallthru)
+(note 24 23 25 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+
+(call_insn 25 24 26 3 win32_timer.c:78 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("GetLastError@0") [flags 0x43]  <function_decl 0x7fbe6080 GetLastError>) [0 S1 A8])
+            (const_int 0 [0x0]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 26 25 27 3 win32_timer.c:78 (set (reg:SI 61 [ D.35083 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 27 26 28 3 win32_timer.c:78 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 61 [ D.35083 ])) 44 {*movsi_1} (nil))
+
+(insn 28 27 29 3 win32_timer.c:78 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC6") [flags 0x2]  <string_cst 0x7ff68fb8>)) 44 {*movsi_1} (nil))
+
+(call_insn 29 28 30 3 win32_timer.c:78 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("printf") [flags 0x43]  <function_decl 0x7fdf5f00 printf>) [0 S1 A8])
+            (const_int 8 [0x8]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 30 29 55 3 win32_timer.c:79 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])
+        (const_int -1 [0xffffffff])) 44 {*movsi_1} (nil))
+
+(jump_insn 55 30 56 3 (set (pc)
+        (label_ref 42)) -1 (nil)
+ -> 42)
+;; End of basic block 3 -> ( 5)
+
+;; Succ edge  5 [100.0%] 
+
+(barrier 56 55 33)
+
+;; Start of basic block ( 2) -> 4
+;; Pred edge  2
+(code_label 33 56 34 4 9 "" [1 uses])
+
+(note 34 33 35 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+
+(insn 35 34 36 4 win32_timer.c:82 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (symbol_ref/f:SI ("*LC7") [flags 0x2]  <string_cst 0x7f48ec70>)) 44 {*movsi_1} (nil))
+
+(call_insn 36 35 37 4 win32_timer.c:82 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("puts") [flags 0x43]  <function_decl 0x7fdf6280 __builtin_puts>) [0 S1 A8])
+            (const_int 4 [0x4]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(call_insn 37 36 38 4 win32_timer.c:82 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("__getreent") [flags 0x43]  <function_decl 0x7fe05480 __getreent>) [0 S1 A8])
+            (const_int 0 [0x0]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 38 37 39 4 win32_timer.c:82 (set (reg/f:SI 62 [ D.35085 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 39 38 40 4 win32_timer.c:82 (set (reg/f:SI 63 [ D.35086 ])
+        (mem/s/f/j:SI (plus:SI (reg/f:SI 62 [ D.35085 ])
+                (const_int 8 [0x8])) [0 D.35085_12->_stdout+0 S4 A64])) 44 {*movsi_1} (nil))
+
+(insn 40 39 41 4 win32_timer.c:82 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (reg/f:SI 63 [ D.35086 ])) 44 {*movsi_1} (nil))
+
+(call_insn 41 40 42 4 win32_timer.c:82 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("fflush") [flags 0x43]  <function_decl 0x7fe05c80 fflush>) [0 S1 A8])
+            (const_int 4 [0x4]))) 696 {*call_value_0} (nil)
+    (nil))
+;; End of basic block 4 -> ( 5)
+
+;; Succ edge  5 (fallthru)
+
+;; Start of basic block ( 4 3) -> 5
+;; Pred edge  4 (fallthru)
+;; Pred edge  3 [100.0%] 
+(code_label 42 41 43 5 10 "" [1 uses])
+
+(note 43 42 44 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+
+(insn 44 43 45 5 win32_timer.c:85 (set (reg:SI 64 [ D.35087 ])
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 retVal+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 45 44 49 5 win32_timer.c:85 (set (reg:SI 65 [ <retval> ])
+        (reg:SI 64 [ D.35087 ])) 44 {*movsi_1} (nil))
+
+(insn 49 45 52 5 win32_timer.c:86 (set (reg/i:SI 0 ax)
+        (reg:SI 65 [ <retval> ])) 44 {*movsi_1} (nil))
+
+(insn 52 49 0 5 win32_timer.c:86 (use (reg/i:SI 0 ax)) -1 (nil))
+;; End of basic block 5 -> ( 1)
+
+;; Succ edge  EXIT [100.0%]  (fallthru)
+
+
+;; Function uninstallTimerFunc (uninstallTimerFunc)
+
+Reordered sequence:
+ 2 bb 2  [0]
+(note 1 0 3 NOTE_INSN_DELETED)
+
+;; Start of basic block ( 0) -> 2
+;; Pred edge  ENTRY (fallthru)
+(note 3 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+
+(note 2 3 5 2 NOTE_INSN_FUNCTION_BEG)
+
+(insn 5 2 6 2 win32_timer.c:89 (set (reg:SI 61)
+        (mem/c/i:SI (reg/f:SI 16 argp) [0 timer_id+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 6 5 7 2 win32_timer.c:89 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (reg:SI 61)) 44 {*movsi_1} (nil))
+
+(call_insn 7 6 8 2 win32_timer.c:89 (parallel [
+            (set (reg:SI 0 ax)
+                (call (mem:QI (symbol_ref:SI ("timeKillEvent@4") [flags 0x43]  <function_decl 0x7f88b600 timeKillEvent>) [0 S1 A8])
+                    (const_int 4 [0x4])))
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int 4 [0x4])))
+        ]) 693 {*call_value_pop_0} (nil)
+    (nil))
+
+(insn 8 7 9 2 win32_timer.c:89 (parallel [
+            (set (reg/f:SI 7 sp)
+                (plus:SI (reg/f:SI 7 sp)
+                    (const_int -4 [0xfffffffc])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 9 8 10 2 win32_timer.c:89 (set (reg:SI 58 [ D.35076 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 10 9 11 2 win32_timer.c:89 (set (reg:SI 59 [ D.35075 ])
+        (reg:SI 58 [ D.35076 ])) 44 {*movsi_1} (nil))
+
+(insn 11 10 15 2 win32_timer.c:89 (set (reg:SI 60 [ <retval> ])
+        (reg:SI 59 [ D.35075 ])) 44 {*movsi_1} (nil))
+
+(insn 15 11 18 2 win32_timer.c:90 (set (reg/i:SI 0 ax)
+        (reg:SI 60 [ <retval> ])) 44 {*movsi_1} (nil))
+
+(insn 18 15 0 2 win32_timer.c:90 (use (reg/i:SI 0 ax)) -1 (nil))
+;; End of basic block 2 -> ( 1)
+
+;; Succ edge  EXIT [100.0%]  (fallthru)
+
+
+;; Function testCallback (testCallback)
+
+Reordered sequence:
+ 2 bb 2  [0]
+ 3 bb 3  [0]
+ 4 bb 4  [0]
+ 5 bb 5  [0]
+ 6 bb 6  [0]
+ 7 bb 7  [0]
+(note 1 0 3 NOTE_INSN_DELETED)
+
+;; Start of basic block ( 0) -> 2
+;; Pred edge  ENTRY (fallthru)
+(note 3 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+
+(note 2 3 5 2 NOTE_INSN_FUNCTION_BEG)
+
+(insn 5 2 6 2 win32_timer.c:97 (set (reg:CCZ 17 flags)
+        (compare:CCZ (mem/c/i:SI (plus:SI (reg/f:SI 16 argp)
+                    (const_int 8 [0x8])) [0 inc+0 S4 A32])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 6 5 7 2 win32_timer.c:97 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 11)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 11)
+;; End of basic block 2 -> ( 3 4)
+
+;; Succ edge  3 (fallthru)
+;; Succ edge  4
+
+;; Start of basic block ( 2) -> 3
+;; Pred edge  2 (fallthru)
+(note 7 6 8 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+
+(insn 8 7 28 3 win32_timer.c:97 (set (reg:SI 58 [ iftmp.2 ])
+        (mem/c/i:SI (plus:SI (reg/f:SI 16 argp)
+                (const_int 8 [0x8])) [0 inc+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(jump_insn 28 8 29 3 (set (pc)
+        (label_ref 14)) -1 (nil)
+ -> 14)
+;; End of basic block 3 -> ( 5)
+
+;; Succ edge  5 [100.0%] 
+
+(barrier 29 28 11)
+
+;; Start of basic block ( 2) -> 4
+;; Pred edge  2
+(code_label 11 29 12 4 13 "" [1 uses])
+
+(note 12 11 13 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+
+(insn 13 12 14 4 win32_timer.c:97 (set (reg:SI 58 [ iftmp.2 ])
+        (const_int 1 [0x1])) 44 {*movsi_1} (nil))
+;; End of basic block 4 -> ( 5)
+
+;; Succ edge  5 (fallthru)
+
+;; Start of basic block ( 4 3) -> 5
+;; Pred edge  4 (fallthru)
+;; Pred edge  3 [100.0%] 
+(code_label 14 13 15 5 14 "" [1 uses])
+
+(note 15 14 16 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+
+(insn 16 15 17 5 win32_timer.c:97 (set (reg:SI 59 [ counter.3 ])
+        (mem/v/c/i:SI (symbol_ref:SI ("counter") [flags 0x2]  <var_decl 0x7f373900 counter>) [0 counter+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 17 16 18 5 win32_timer.c:97 (parallel [
+            (set (reg:SI 60 [ counter.4 ])
+                (plus:SI (reg:SI 58 [ iftmp.2 ])
+                    (reg:SI 59 [ counter.3 ])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 18 17 19 5 win32_timer.c:97 (set (mem/v/c/i:SI (symbol_ref:SI ("counter") [flags 0x2]  <var_decl 0x7f373900 counter>) [0 counter+0 S4 A32])
+        (reg:SI 60 [ counter.4 ])) 44 {*movsi_1} (nil))
+
+(insn 19 18 20 5 win32_timer.c:99 (set (reg:SI 61 [ counter.5 ])
+        (mem/v/c/i:SI (symbol_ref:SI ("counter") [flags 0x2]  <var_decl 0x7f373900 counter>) [0 counter+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 20 19 21 5 win32_timer.c:99 (set (reg:CC 17 flags)
+        (compare:CC (reg:SI 61 [ counter.5 ])
+            (const_int 99 [0x63]))) 6 {*cmpsi_1} (nil))
+
+(jump_insn 21 20 22 5 win32_timer.c:99 (set (pc)
+        (if_then_else (leu (reg:CC 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref:SI 26)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 26)
+;; End of basic block 5 -> ( 6 7)
+
+;; Succ edge  6 (fallthru)
+;; Succ edge  7
+
+;; Start of basic block ( 5) -> 6
+;; Pred edge  5 (fallthru)
+(note 22 21 23 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+
+(insn 23 22 26 6 win32_timer.c:100 (set (mem/v/c/i:SI (symbol_ref:SI ("exitFlag") [flags 0x2]  <var_decl 0x7f373a20 exitFlag>) [0 exitFlag+0 S4 A32])
+        (const_int 1 [0x1])) 44 {*movsi_1} (nil))
+;; End of basic block 6 -> ( 7)
+
+;; Succ edge  7 (fallthru)
+
+;; Start of basic block ( 6 5) -> 7
+;; Pred edge  6 (fallthru)
+;; Pred edge  5
+(code_label 26 23 27 7 12 "" [1 uses])
+
+(note 27 26 0 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+;; End of basic block 7 -> ( 1)
+
+;; Succ edge  EXIT [100.0%]  (fallthru)
+
+
+;; Function main (main)
+
+Reordered sequence:
+ 2 bb 2  [0]
+ 3 bb 3  [0]
+ 4 bb 4  [0]
+ 5 bb 5  [0]
+ 6 bb 6  [0]
+ 7 bb 7  [0]
+ 8 bb 8  [0]
+(note 1 0 4 NOTE_INSN_DELETED)
+
+;; Start of basic block ( 0) -> 2
+;; Pred edge  ENTRY (fallthru)
+(note 4 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+
+(note 2 4 3 2 NOTE_INSN_FUNCTION_BEG)
+
+(call_insn 3 2 6 2 win32_timer.c:106 (call (mem:QI (symbol_ref:SI ("__main") [flags 0x43]) [0 S1 A8])
+        (const_int 0 [0x0])) 483 {*call_0} (expr_list:REG_EH_REGION (const_int 0 [0x0])
+        (nil))
+    (nil))
+
+(insn 6 3 7 2 win32_timer.c:108 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -8 [0xfffffff8])) [0 timer_id+0 S4 A32])
+        (const_int 0 [0x0])) 44 {*movsi_1} (nil))
+
+(insn 7 6 8 2 win32_timer.c:110 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (const_int 1000 [0x3e8])) 44 {*movsi_1} (nil))
+
+(call_insn 8 7 9 2 win32_timer.c:110 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("SetSchedulerRes") [flags 0x3]  <function_decl 0x7f322980 SetSchedulerRes>) [0 S1 A8])
+            (const_int 4 [0x4]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 9 8 10 2 win32_timer.c:110 (set (reg:SI 62)
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(insn 10 9 11 2 win32_timer.c:110 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 status+0 S4 A32])
+        (reg:SI 62)) 44 {*movsi_1} (nil))
+
+(insn 11 10 12 2 win32_timer.c:111 (set (reg:CCZ 17 flags)
+        (compare:CCZ (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                    (const_int -4 [0xfffffffc])) [0 status+0 S4 A32])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 12 11 13 2 win32_timer.c:111 (set (pc)
+        (if_then_else (ne (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 23)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 23)
+;; End of basic block 2 -> ( 3 4)
+
+;; Succ edge  3 (fallthru)
+;; Succ edge  4
+
+;; Start of basic block ( 2) -> 3
+;; Pred edge  2 (fallthru)
+(note 13 12 14 3 [bb 3] NOTE_INSN_BASIC_BLOCK)
+
+(insn 14 13 15 3 win32_timer.c:111 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 12 [0xc])) [0 S4 A32])
+        (const_int 2 [0x2])) 44 {*movsi_1} (nil))
+
+(insn 15 14 16 3 win32_timer.c:111 (set (mem:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 8 [0x8])) [0 S4 A32])
+        (symbol_ref:SI ("testCallback") [flags 0x3]  <function_decl 0x7f322b80 testCallback>)) 44 {*movsi_1} (nil))
+
+(insn 16 15 17 3 win32_timer.c:111 (parallel [
+            (set (reg:SI 63)
+                (plus:SI (reg/f:SI 20 frame)
+                    (const_int -8 [0xfffffff8])))
+            (clobber (reg:CC 17 flags))
+        ]) 197 {*addsi_1} (nil))
+
+(insn 17 16 18 3 win32_timer.c:111 (set (mem/f/i:SI (plus:SI (reg/f:SI 7 sp)
+                (const_int 4 [0x4])) [0 S4 A32])
+        (reg:SI 63)) 44 {*movsi_1} (expr_list:REG_EQUAL (plus:SI (reg/f:SI 20 frame)
+            (const_int -8 [0xfffffff8]))
+        (nil)))
+
+(insn 18 17 19 3 win32_timer.c:111 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (const_int 1000 [0x3e8])) 44 {*movsi_1} (nil))
+
+(call_insn 19 18 20 3 win32_timer.c:111 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("installTimerFunc") [flags 0x3]  <function_decl 0x7f322a80 installTimerFunc>) [0 S1 A8])
+            (const_int 16 [0x10]))) 696 {*call_value_0} (nil)
+    (nil))
+
+(insn 20 19 52 3 win32_timer.c:111 (set (reg:SI 58 [ iftmp.0 ])
+        (reg:SI 0 ax)) 44 {*movsi_1} (nil))
+
+(jump_insn 52 20 53 3 (set (pc)
+        (label_ref 26)) -1 (nil)
+ -> 26)
+;; End of basic block 3 -> ( 5)
+
+;; Succ edge  5 [100.0%] 
+
+(barrier 53 52 23)
+
+;; Start of basic block ( 2) -> 4
+;; Pred edge  2
+(code_label 23 53 24 4 17 "" [1 uses])
+
+(note 24 23 25 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+
+(insn 25 24 26 4 win32_timer.c:111 (set (reg:SI 58 [ iftmp.0 ])
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 status+0 S4 A32])) 44 {*movsi_1} (nil))
+;; End of basic block 4 -> ( 5)
+
+;; Succ edge  5 (fallthru)
+
+;; Start of basic block ( 4 3) -> 5
+;; Pred edge  4 (fallthru)
+;; Pred edge  3 [100.0%] 
+(code_label 26 25 27 5 18 "" [1 uses])
+
+(note 27 26 28 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+
+(insn 28 27 54 5 win32_timer.c:111 (set (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 status+0 S4 A32])
+        (reg:SI 58 [ iftmp.0 ])) 44 {*movsi_1} (nil))
+
+(jump_insn 54 28 55 5 win32_timer.c:113 (set (pc)
+        (label_ref 34)) -1 (nil)
+ -> 34)
+;; End of basic block 5 -> ( 7)
+
+;; Succ edge  7 [100.0%] 
+
+(barrier 55 54 37)
+
+;; Start of basic block ( 7) -> 6
+;; Pred edge  7
+(code_label 37 55 31 6 20 "" [1 uses])
+
+(note 31 37 32 6 [bb 6] NOTE_INSN_BASIC_BLOCK)
+
+(insn 32 31 33 6 win32_timer.c:113 (set (mem:SI (reg/f:SI 7 sp) [0 S4 A32])
+        (const_int 1 [0x1])) 44 {*movsi_1} (nil))
+
+(call_insn 33 32 34 6 win32_timer.c:113 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:SI ("sleep") [flags 0x43]  <function_decl 0x7f322c80 sleep>) [0 S1 A8])
+            (const_int 4 [0x4]))) 696 {*call_value_0} (nil)
+    (nil))
+;; End of basic block 6 -> ( 7)
+
+;; Succ edge  7 (fallthru)
+
+;; Start of basic block ( 6 5) -> 7
+;; Pred edge  6 (fallthru)
+;; Pred edge  5 [100.0%] 
+(code_label 34 33 35 7 19 "" [1 uses])
+
+(note 35 34 36 7 [bb 7] NOTE_INSN_BASIC_BLOCK)
+
+(insn 36 35 38 7 win32_timer.c:113 (set (reg:SI 59 [ exitFlag.1 ])
+        (mem/v/c/i:SI (symbol_ref:SI ("exitFlag") [flags 0x2]  <var_decl 0x7f373a20 exitFlag>) [0 exitFlag+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 38 36 39 7 win32_timer.c:113 (set (reg:CCZ 17 flags)
+        (compare:CCZ (reg:SI 59 [ exitFlag.1 ])
+            (const_int 0 [0x0]))) 2 {*cmpsi_ccno_1} (nil))
+
+(jump_insn 39 38 40 7 win32_timer.c:113 (set (pc)
+        (if_then_else (eq (reg:CCZ 17 flags)
+                (const_int 0 [0x0]))
+            (label_ref 37)
+            (pc))) 464 {*jcc_1} (nil)
+ -> 37)
+;; End of basic block 7 -> ( 6 8)
+
+;; Succ edge  6
+;; Succ edge  8 (fallthru)
+
+;; Start of basic block ( 7) -> 8
+;; Pred edge  7 (fallthru)
+(note 40 39 41 8 [bb 8] NOTE_INSN_BASIC_BLOCK)
+
+(insn 41 40 42 8 win32_timer.c:118 (set (reg:SI 60 [ D.35064 ])
+        (mem/c/i:SI (plus:SI (reg/f:SI 20 frame)
+                (const_int -4 [0xfffffffc])) [0 status+0 S4 A32])) 44 {*movsi_1} (nil))
+
+(insn 42 41 46 8 win32_timer.c:118 (set (reg:SI 61 [ <retval> ])
+        (reg:SI 60 [ D.35064 ])) 44 {*movsi_1} (nil))
+
+(insn 46 42 49 8 win32_timer.c:119 (set (reg/i:SI 0 ax)
+        (reg:SI 61 [ <retval> ])) 44 {*movsi_1} (nil))
+
+(insn 49 46 0 8 win32_timer.c:119 (use (reg/i:SI 0 ax)) -1 (nil))
+;; End of basic block 8 -> ( 1)
+
+;; Succ edge  EXIT [100.0%]  (fallthru)
+
