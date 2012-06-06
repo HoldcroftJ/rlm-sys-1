@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : Russ Magee
  *  Created       : Fri May 18 22:46:40 2012
- *  Last Modified : <120605.2139>
+ *  Last Modified : <120605.2214>
  *
  *  Description	
  *
@@ -38,9 +38,7 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <arpa/inet.h>
 #include "fame.h"
 
-#ifdef __WIN32__
-#include "win32_timer.h"
-#endif
+#include "timer_1ms.h"
 
 typedef struct M68K_PROGRAM m68k_program;
 typedef struct M68K_DATA m68k_data;

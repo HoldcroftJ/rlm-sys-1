@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : Russ Magee
  *  Created       : Thu May 31 20:49:18 2012
- *  Last Modified : <120604.2031>
+ *  Last Modified : <120605.2218>
  *
  *  Description	
  *
@@ -22,11 +22,22 @@
  *  History
  *	
  ****************************************************************************/
+/*
+ * To build standalone test executable: [__CYGWIN__]
+ * gcc -o win32_timer timer_1ms.c -lwinmm -D__MAINTEST__=1
+ */
 
 static const char rcsid[] = "@(#) : $Id$";
 
 #include <stdio.h>
+
+#ifdef __CYGWIN__
 #include "windows.h"
+#endif
+
+#include "timer_1ms.h"
+
+#ifdef __CYGWIN__
 
 static int32_t
 SetSchedulerRes(uint32_t period_ms)
@@ -68,7 +79,8 @@ static int32_t ResetSchedulerRes(uint32_t period_ms) {
     return retVal;
 }
 
-int32_t installTimerFunc(uint32_t period_ms, uint32_t *timer_id, void *cb, uint32_t arg) {
+static int32_t installTimerFunc(uint32_t period_ms, uint32_t *timer_id,
+                         void *cb, uint32_t arg) {
     int32_t retVal = 0;
     
     if( (*timer_id = timeSetEvent(period_ms, period_ms,
@@ -85,9 +97,10 @@ int32_t installTimerFunc(uint32_t period_ms, uint32_t *timer_id, void *cb, uint3
     return retVal;
 }
 
-int32_t uninstallTimerFunc(uint32_t timer_id) {
+static int32_t uninstallTimerFunc(uint32_t timer_id) {
     return timeKillEvent(timer_id);
 }
+
 
 #if defined(__MAINTEST__)
 static volatile uint32_t counter = 0ul;
@@ -121,5 +134,29 @@ int main(int argc, char *argv[]) {
     
     return status;
 }
-#endif
+#endif /* __MAINTEST__ */
+
+#endif /* __CYGWIN__ */
+
+/** Install ms-resolution timer
+ * 
+ * @param[out] tid - handle for installed timer
+ * @param[in] cb - callback function to execute on each tick
+ * @param[in] arg - optional argument to callback
+ * @return int32_t - TRUE if timer installed OK; FALSE otherwise
+ */
+int32_t installMsTimer(uint32_t *tid, void* cb, uint32_t arg)
+{
+    return installTimerFunc(1, tid, cb, arg);
+}
+
+/** Uninstall ms-resolution timer
+ *
+ * @param[in] tid - timer handle used to install timer
+ * @return int32_t - TRUE if timer was uninstalled; FALSE otherwise
+ */
+int32_t uninstallMsTimer(uint32_t tid)
+{
+    return uninstallTimerFunc(tid);
+}
 
