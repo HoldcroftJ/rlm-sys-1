@@ -234,6 +234,7 @@ void gio_byte_write(int address, int data)
         
     case TERM0+TERM0_TXb:
     case TERM1+TERM1_TXb:
+        /* TODO */
         {
             int chanOffset = offset & ~0x0Fu;
             
