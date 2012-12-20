@@ -1,0 +1,118 @@
+* rlm-sys-1 test code
+*
+* UART test of basic functionality
+*
+
+    use     <oskdefs.d>
+    
+    opt -l
+    nam ROMTest
+    
+Edition     equ 1
+Typ_Lang    equ (Systm<<8)+Objct
+Attr_Rev    equ ((ReEnt+SupStat)<<8)+0
+    psect   rom,Typ_Lang,Attr_Rev,Edition,0,Entry
+
+ROM_BASE    equ $f00000
+INITIAL_SSP equ $800
+
+TIM0_DATw   equ $a00000
+TIM0_CTLb   equ $a00003
+TIM0_DIVb   equ $a00005
+
+TIMT_DATb   equ $a0000d
+TIMT_LOADb  equ $a0000f
+
+TERM0       equ $a00020
+TERM_TXb    equ $01
+TERM_RXb    equ $03
+TERM_CTLb   equ $05
+
+TERM0_TXb   equ TERM0+TERM_TXb
+TERM0_RXb   equ TERM0+TERM_RXb
+TERM0_CTLb  equ TERM0+TERM_CTLb
+
+*
+TERM_CTLb_TXE   equ $10
+TERM_CTLb_RXF   equ $08
+TERM_CTLb_RXV   equ $04
+TERM_CTLb_PEND  equ $02
+TERM_CTLb_IRQEN equ $01
+
+    org ROM_BASE
+    
+Entry:
+    dc.l    INITIAL_SSP
+    dc.l    Start
+Start:
+    ori.w  #$2700,sr
+    
+    move.l  #ISR1,$64
+    move.l  #ISR2,$68
+    move.l  #ISR3,$6C
+    move.l  #ISR4,$70
+    move.l  #ISR5,$74
+    move.l  #ISR6,$78
+    move.l  #ISR7,$7C
+
+    moveq.l #0,d4
+    lea     TERM0,a0
+    ori.b   #(TERM_CTLb_TXE),TERM_TXb(a0)
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    
+loop:
+    move.b  TERM_CTLb(a0),d4
+    andi.b  #TERM_CTLb_RXF,d4         * RXF=1?
+    beq.s   loop
+    move.b  TERM_RXb(a0),d4   * get TERM0 RXb (testing)
+    addi.l  #$11111111,d5
+_wait_tx:
+    move.b  TERM_CTLb(a0),d5
+    andi.b  #TERM_CTLb_TXE,d5 * TXE?
+    beq.s   _wait_tx
+    eori.b  #'a'-'A',d4     * toggle caps on recvd char
+    move.b  d4,TERM_TXb(a0) * send a char back to show receipt
+    bra.s   loop
+ISR7:
+    bra.s   ISR7
+ISR6:
+    move.b  TIMT_LOADb,d7  * ACK TIMT IRQ
+    addi.l  #1,d3
+    rte
+ISR5:
+    lea     TIM0_CTLb,a1
+    move.b  (a1),d6        * ACK TIM0 IRQ
+    addi.l  #1,d2
+*    move.l  #$DEAD0005,d2
+    lea     TIM0_DATw,a1
+*    clr.l   d2
+    rte
+ISR4:
+    bra.s   ISR4
+ISR3:
+    bra.s   ISR3
+ISR2:
+    bra.s   ISR2
+ISR1:
+    bra.s   ISR1
+
+done:
+    bra.s   done
+    
+    ends
+

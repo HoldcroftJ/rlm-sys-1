@@ -1,0 +1,4 @@
+socat udp4-sendto:127.0.0.1:8800 -
+stty -echo -icanon -icrnl -inlcr min 1 && nc -u 127.0.0.1 8800
+stty -icanon -icrnl -inlcr min 1 && socat udp:127.0.0.1:8800 -
+stty -icanon -icrnl -inlcr min 1 && socat udp:127.0.0.1:8800 -

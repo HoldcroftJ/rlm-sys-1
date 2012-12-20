@@ -1,0 +1,90 @@
+* rlm-sys-1 test code
+*
+* Fetch Tim0 value into d0.l, looping tightly
+*
+
+    use     <oskdefs.d>
+    
+    opt -l
+    nam ROMTest
+    
+Edition     equ 1
+Typ_Lang    equ (Systm<<8)+Objct
+Attr_Rev    equ ((ReEnt+SupStat)<<8)+0
+    psect   rom,Typ_Lang,Attr_Rev,Edition,0,Entry
+
+ROM_BASE    equ $f00000
+INITIAL_SSP equ $800
+
+TIM0_DATw   equ $a00000
+TIM0_CTLb   equ $a00003
+TIM0_DIVb   equ $a00005
+
+TIMT_DATb   equ $a0000d
+TIMT_LOADb  equ $a0000f
+
+TERM0       equ $a00020
+TERM_TXb    equ $01
+TERM_RXb    equ $03
+TERM_CTLb   equ $05
+
+TERM0_TXb   equ TERM0+TERM_TXb
+TERM0_RXb   equ TERM0+TERM_RXb
+TERM0_CTLb  equ TERM0+TERM_CTLb
+
+    org ROM_BASE
+    
+Entry:
+    dc.l    INITIAL_SSP
+    dc.l    Start
+Start:
+    move.l  #ISR1,$64
+    move.l  #ISR2,$68
+    move.l  #ISR3,$6C
+    move.l  #ISR4,$70
+    move.l  #ISR5,$74
+    move.l  #ISR6,$78
+    move.l  #ISR7,$7C
+    
+    movea.l  #TIM0_DATw,a0    * Get current timer value
+    move.w  (a0),d0
+    move.b  #0,TIM0_DIVb
+    ori.b   #5,TIM0_CTLb      * enable TIM0 (COUNTEN=1,PEND=0,IRQEN=1)
+    move.w  #$300,d1
+    move.b  #100,TIMT_LOADb    * start TIMT ms timer
+    move.w  #$2400,sr          * irq mask all below IRQ5 (enable TIMT, TIM0)
+loop:
+    move.b  TERM0_RXb,d4    * get TERM0 RXb (testing)
+    move.w  (a0),d1
+    cmp.w   d0,d1
+    bcc.s   loop
+    move.w  #0,TIM0_DATw
+    bra.s   loop
+ISR7:
+    bra.s   ISR7
+ISR6:
+    move.b  TIMT_LOADb,d7  * ACK TIMT IRQ
+    addi.l  #1,d3
+    rte
+ISR5:
+    lea     TIM0_CTLb,a1
+    move.b  (a1),d6        * ACK TIM0 IRQ
+    addi.l  #1,d2
+*    move.l  #$DEAD0005,d2
+    lea     TIM0_DATw,a1
+*    clr.l   d2
+    rte
+ISR4:
+    bra.s   ISR4
+ISR3:
+    bra.s   ISR3
+ISR2:
+    bra.s   ISR2
+ISR1:
+    bra.s   ISR1
+
+done:
+    bra.s   done
+    
+    ends
+

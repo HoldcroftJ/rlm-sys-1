@@ -1,0 +1,88 @@
+* rlm-sys-1 test code
+*
+* Test TimT IRQs
+*
+
+    use     <oskdefs.d>
+    
+    opt -l
+    nam ROMTest
+    
+Edition     equ 1
+Typ_Lang    equ (Systm<<8)+Objct
+Attr_Rev    equ ((ReEnt+SupStat)<<8)+0
+    psect   rom,Typ_Lang,Attr_Rev,Edition,0,Entry
+
+ROM_BASE    equ $f00000
+INITIAL_SSP equ $800
+
+TIM0_DATw   equ $a00000
+TIM0_CTLb   equ $a00003
+TIM0_DIVb   equ $a00005
+
+TIMT_DATb   equ $a0000d
+TIMT_LOADb  equ $a0000f
+
+TERM0       equ $a00020
+TERM_TXb    equ $01
+TERM_RXb    equ $03
+TERM_CTLb   equ $05
+
+TERM0_TXb   equ TERM0+TERM_TXb
+TERM0_RXb   equ TERM0+TERM_RXb
+TERM0_CTLb  equ TERM0+TERM_CTLb
+
+    org ROM_BASE
+    
+Entry:
+    dc.l    INITIAL_SSP
+    dc.l    Start
+Start:
+    move.l  #ISR1,$64
+    move.l  #ISR2,$68
+    move.l  #ISR3,$6C
+    move.l  #ISR4,$70
+    move.l  #ISR5,$74
+    move.l  #ISR6,$78
+    move.l  #ISR7,$7C
+    
+    ori.w   #$700,sr            *IRQs masked
+    eor.l   d6,d6
+    move.l  d6,d5
+    move.b  #3,TIMT_DATb        *read-only reg, should not take
+    move.b  #3,TIMT_LOADb       * start TIMT ms timer
+repeat:
+*    move.w  #$2400,sr           * irq mask all below IRQ5 (enable TIMT, TIM0)
+    stop    #$2000
+    bra.s   repeat
+loop:
+    move.b  TIMT_DATb,d0
+    moveq.l #0,d7
+    bra.s   loop
+    
+ISR7:
+    move.l #$DEAD0007,d7
+    bra.s   ISR7
+ISR6:
+    move.l #$DEAD0006,d7
+    move.b  TIMT_LOADb,d6  * ACK TIMT IRQ
+    addi.l  #1,d5
+    rte
+ISR5:
+    move.l #$DEAD0005,d7
+    bra.s   ISR5
+ISR4:
+    move.l #$DEAD0004,d7
+    bra.s   ISR4
+ISR3:
+    move.l #$DEAD0003,d7
+    bra.s   ISR3
+ISR2:
+    move.l #$DEAD0002,d7
+    bra.s   ISR2
+ISR1:
+    move.l #$DEAD0001,d7
+    bra.s   ISR1
+    
+    ends
+

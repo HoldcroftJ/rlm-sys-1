@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : Russ Magee
  *  Created       : Thu May 31 20:49:18 2012
- *  Last Modified : <120605.2218>
+ *  Last Modified : <120804.1124>
  *
  *  Description	
  *
@@ -38,6 +38,10 @@ static const char rcsid[] = "@(#) : $Id$";
 #include "timer_1ms.h"
 
 #ifdef __CYGWIN__
+
+#ifndef TIMER_FREQ
+#define TIMER_FREQ 1
+#endif
 
 static int32_t
 SetSchedulerRes(uint32_t period_ms)
@@ -72,10 +76,6 @@ static int32_t ResetSchedulerRes(uint32_t period_ms) {
         printf("error resetting schedule res - error %d\n", GetLastError());
         retVal = -1;
     }
-    else {
-        printf("reset scheduler res.\n");
-    }
-    
     return retVal;
 }
 
@@ -90,10 +90,6 @@ static int32_t installTimerFunc(uint32_t period_ms, uint32_t *timer_id,
         printf("error installing timer callback - error %d\n", GetLastError());
         retVal = -1;
     }
-    else {
-        printf("installed timer callback.\n"); fflush(stdout);
-    }
-    
     return retVal;
 }
 
@@ -147,7 +143,7 @@ int main(int argc, char *argv[]) {
  */
 int32_t installMsTimer(uint32_t *tid, void* cb, uint32_t arg)
 {
-    return installTimerFunc(1, tid, cb, arg);
+    return installTimerFunc(TIMER_FREQ, tid, cb, arg);
 }
 
 /** Uninstall ms-resolution timer
